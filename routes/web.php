@@ -25,6 +25,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ResetPassword;
 use App\Http\Controllers\ChangePassword;
 use App\Http\Controllers\TestAPIController;
+use App\Http\Controllers\TestFormPdfController;
 
 Route::get('/', function () {
     return redirect('/dashboard');
@@ -41,6 +42,7 @@ Route::get('/dashboard', [HomeController::class, 'index'])->name('home')->middle
 Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/testando-api', [TestAPIController::class, 'getApi'])->name('test-api');
+    Route::get('/test-form-pdf', [TestFormPdfController::class, 'index'])->name('test-pdf');
 
 
     Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');
