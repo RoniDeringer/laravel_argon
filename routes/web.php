@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/testando-api', [TestAPIController::class, 'getApi'])->name('test-api');
     Route::get('/test-form-pdf', [TestFormPdfController::class, 'index'])->name('test-pdf');
+    Route::post('/test-form-pdf', [TestFormPdfController::class, 'store'])->name('form-procedimento');
 
 
     Route::get('/virtual-reality', [PageController::class, 'vr'])->name('virtual-reality');

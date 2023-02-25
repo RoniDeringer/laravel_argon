@@ -1,5 +1,11 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
+<?php
+
+$data = $data[0];
+?>
+
+
 @section('content')
     @include('layouts.navbars.auth.topnav', ['title' => 'Your Profile'])
     <div class="card shadow-lg mx-4 card-profile-bottom">
@@ -14,7 +20,7 @@
                     <div class="h-100">
                         <h5 class="mb-1">
                             {{-- {{ auth()->user()->firstname ?? 'Firstname' }} {{ auth()->user()->lastname ?? 'Lastname' }} --}}
-                            Eduarda Iomes
+                           {{$data['name']}}
                         </h5>
                         <p class="mb-0 font-weight-bold text-sm">
                             Estiticista
@@ -58,11 +64,11 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
-                    <form role="form" method="POST" action={{ route('profile.update') }} enctype="multipart/form-data">
+                    <form role="form" method="POST" action={{ route('form-procedimento') }} enctype="multipart/form-data">
                         @csrf
                         <div class="card-header pb-0">
                             <div class="d-flex align-items-center">
-                                <p class="mb-0">Procedimento Estético</p>
+                                <p class="mb-0"><strong>Procedimento Estético (aumentar fonte)</strong></p>
                                 <button type="submit" class="btn btn-primary btn-sm ms-auto">Save</button>
                             </div>
                         </div>
@@ -93,49 +99,55 @@
                                         <input class="form-control" type="text" name="data_nascimento">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                            </div>
+                            <hr class="horizontal dark">
+                            <p class="text-uppercase text-sm">Procedimento</p>
+
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="example-text-input" class="form-control-label">Serviço</label>
+                                    <select name="servico[]" class="form-control" style="display: none" id="servico_id">
+                                        <option value="" selected disabled></option>
+                                        @foreach($data['servicos'] as $item)
+                                            <option value="{{$item['id']}}"  selected>{{$item['nome']}}</option>
+                                        @endforeach
+                                    </select>
+                                    <input name="servico[]" required class="form-control" type="text" list="choices-button" placeholder="Digite para pesquisar"  id="servicos_datalist">
+                                    <datalist  class="form-control" name="choices-button" id="choices-button" style="display: none">
+                                        @foreach($data['servicos'] as $item)
+                                            <option data-value="{{$item['id']}}">{{$item['nome']}}</option>
+                                        @endforeach
+                                    </datalist>
+                                </div>
+                            </div>
+                            <hr class="horizontal dark">
+
+                            <div class="row">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Telefone</label>
                                         <input class="form-control" type="text" name="telefone">
                                     </div>
                                 </div>
-                            </div>
-                            <hr class="horizontal dark">
-                            <p class="text-uppercase text-sm">Procedimento</p>
-                            <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">Address</label>
-                                        <input class="form-control" type="text" name="address">
+                                        <label for="example-text-input" class="form-control-label">Cidade</label>
+                                        <input class="form-control" type="text" name="cidade" >
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">City</label>
-                                        <input class="form-control" type="text" name="city" value="{{ old('city', auth()->user()->city) }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">Country</label>
-                                        <input class="form-control" type="text" name="country" value="{{ old('country', auth()->user()->country) }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">Postal code</label>
-                                        <input class="form-control" type="text" name="postal" value="{{ old('postal', auth()->user()->postal) }}">
+                                        <label for="example-time-input" class="form-control-label">Horário do atendimento</label>
+                                        <input class="form-control" type="time" value="10:30:00" name="horario">
                                     </div>
                                 </div>
                             </div>
-                            <hr class="horizontal dark">
-                            <p class="text-uppercase text-sm">About me</p>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">About me</label>
-                                        <input class="form-control" type="text" name="about"
-                                            value="{{ old('about', auth()->user()->about) }}">
+                                        <label for="example-text-input" class="form-control-label">Observação</label>
+                                        <textarea class="form-control" name="observacao" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -207,3 +219,41 @@
         @include('layouts.footers.auth.footer')
     </div>
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{{ asset('js/theme/plugins/choices.min.js') }}"></script>
+<script>
+    changeSelect()
+    document.addEventListener("DOMContentLoaded", function(e) {
+        if (document.querySelector('.choices-button')) {
+            for(let input of document.querySelectorAll('.choices-button')){
+                let search = new Choices(input, {});
+            }
+        }
+    });
+
+
+    /* === FUNÇÕES === */
+
+    /*
+    Função para setar o valor do select escondido de acordo com o valor selecionado no datalist
+    Foi feito esse select escondido para conseguir pegar o ID do produto no back-end
+    */
+    function changeSelect() {
+            document.querySelectorAll('#servicos_datalist').forEach(input => {
+                input.addEventListener('change', function(e){
+                    let valueDatalist = 0
+
+                    let pai = input.parentElement
+
+                    let listagem = document.querySelectorAll('#choices-button option')
+                    listagem.forEach(nome => {
+                        if(nome.value == input.value){
+                            valueDatalist = nome.getAttribute('data-value')
+                        }
+                    })
+                    pai.childNodes[1].value = valueDatalist
+                })
+            })
+        }
+
+</script>
