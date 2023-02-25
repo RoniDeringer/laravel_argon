@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 class TestCurlController extends Controller
 {
-    public function __construct()
+    public function getCurl()
     {
-     return dd('construr');
+        return view('pages/test.curl');
     }
 
-    public function getCurl(){
-        return view('test.curl');
+    public function getApi1()
+    {
+        //https://jsonplaceholder.typicode.com/todos/1
+
+        //verificar se existe alguma lib do laravel
     }
 }
